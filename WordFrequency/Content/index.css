@@ -1,0 +1,8 @@
+﻿body {
+    background-color: #F5F5F5;
+}
+
+.body-content {
+    height: 100%;
+    box-shadow: 5px 2px 60px;
+}

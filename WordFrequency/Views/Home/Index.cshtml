@@ -1,0 +1,82 @@
+﻿@using System.Threading.Tasks
+@using WordFrequency.Controllers
+@{
+    ViewBag.Title = "Home Page";
+}
+<link rel="stylesheet" href="../../Content/index.css" type="text/css" />
+
+<div id="all">
+    <input type="url" id="url" placeholder="URL">
+    <button id="btn">Go</button>
+    <br>
+    <br>
+    <div id="content"></div>
+</div>
+
+<script>
+    var btn = document.getElementById("btn");
+    btn.addEventListener("click", function () {
+
+        var urlLink = document.getElementById("url");
+
+        $.ajax({
+            url: ("/Home/DownloadPageAsync?url=" + encodeURIComponent(urlLink.value)),
+            type: 'GET',
+            contentType: 'application/json',
+            async : true,
+
+            success: function (json) {
+                removeOldDivs();
+                printJSON(json);
+            },
+            error: function () { alert("Error reading JSON from URL."); }
+        });
+    });
+
+    function removeOldDivs() {
+        var content = document.getElementById("content");
+
+        if (content !== null) {
+            while (content.firstChild) {
+                content.removeChild(content.firstChild);
+            }
+            $(content).remove();
+        }
+    }
+
+    function printJSON(json) {
+
+        var all = document.getElementById("all");
+        var content = document.createElement("div");
+        content.id = "content";
+        all.append(content);
+        var newText = json.replace(/[{},"]/g, '');
+        var tempText = "";
+        var i = 0;
+
+        while (i !== newText.length)
+        {
+            if (isNaN(newText[i]) || newText[i] === ' ')
+            {
+                tempText += newText[i];
+                i++;
+                continue;
+            }
+
+            while (!(isNaN(newText[i]))) // If it is a number with more than one digit
+            {
+                tempText += newText[i];
+                i++;
+            }
+
+            var div = document.createElement("div");
+            div.innerHTML = tempText;
+            div.style.fontSize = "large";
+            content.appendChild(div);
+            tempText = "";
+        }
+    }
+
+</script>
+
+
